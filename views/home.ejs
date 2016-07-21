@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ./partials/head %>
+</head>
+<body>
+	<div class="container">
+		<div class="jumbotron">
+			<% include ./partials/header %>			
+			<div class="row" style="height:400px">
+				<div class="col-sm-3">
+					<% include ./partials/left-pane %>
+				</div>
+				<div class="col-sm-9" >
+					<% include ./partials/right-pane %>
+				</div>
+			</div>
+			<% include ./partials/footer %>			
+		</div>
+	</div>
+
+
+		
+     <script src="/socket.io/socket.io.js"></script>
+     <script>
+     	var socket = io();
+     	var msgForm = $("#send-message");
+     	msgForm.submit(function(){
+     	 	var user = $('.nav-pills .active').text();
+     	 	var userTab = '#' + user + 'Msgs';
+     	 	var msg = $('#m').val();
+     	 	$(userTab).append($('<li>').text("You:   " + msg));
+        	socket.emit('chat message', {user: user, msg: msg});
+	        $('#m').val('');
+	        return false;
+	     });
+     	toastr.options.preventDuplicates = true;
+      	socket.on('chat message', function(data) {
+      		var userNav = '#' + data.user;
+      		var userTab = '#' + data.user + 'Msgs';
+      		var activeNav = '#' + $('.nav-pills .active').text();
+      		if(userNav !== activeNav) {
+      			toastr.info(data.user + ' sent you a message!');
+      		}
+      		$(userTab).append($('<li>').text(data.user + ":   " + data.msg));
+      	});
+      	socket.on('system message', function(data) {
+      		var userTab = '#' + data.user + 'Msgs';
+      		$(userTab).append($('<li>').text("SYSTEM:   " + data.msg));
+      		$('#noticeBtn').attr("class", "btn btn-primary");
+      	});
+      	socket.on('notification', function(data) {
+      		toastr.info(data.notification);
+      	});
+     </script>
+</body>
+</html>

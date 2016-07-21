@@ -1,0 +1,9 @@
+<ul class="nav nav-pills nav-stacked">
+    <% for(var i=0; i<users.length; i++) { %>
+    	<% if(i == 0) { %>
+    		<li class="active"><a href="#<%= users[i] %>" data-toggle="tab"><%= users[i] %></a></li>
+    	<% } else { %>
+    		<li><a href="#<%= users[i] %>" data-toggle="tab"><%= users[i] %></a></li>
+    	<% } %>
+    <% } %>
+</ul>

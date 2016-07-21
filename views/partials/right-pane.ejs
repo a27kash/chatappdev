@@ -1,0 +1,20 @@
+<div class="tab-content" id="tabs">
+	<% for(var i=0; i<users.length; i++) { %>
+		<% if(i == 0) { %>
+			<div class="tab-pane active" id="<%= users[i] %>">
+		    	<div class="panel panel-default">
+				  <div class="panel-heading"><%= users[i] %></div>
+				  <div class="panel-body" id="<%= users[i] %>Msgs" style="height:400px; overflow:scroll"></div>
+				</div>
+			</div>
+		<% } else { %>
+    		<div class="tab-pane" id="<%= users[i] %>">
+		    	<div class="panel panel-default">
+				  <div class="panel-heading"><%= users[i] %></div>
+				  <div class="panel-body" id="<%= users[i] %>Msgs" style="height:400px; overflow:scroll"></div>
+				</div>
+			</div>
+    	<% } %>
+    <% } %>
+
+</div>
