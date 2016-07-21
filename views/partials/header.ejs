@@ -5,4 +5,11 @@
   <div class="col-sm-2" style="text-align:center">
   	<h2><%= user %></h2>
   </div>
+  <% if(type == 'admin') { %>
+  <div class="col-sm-9">
+	  <form id="broadcast" action="">
+		<input type="text" class="form-control" id="b" autocomplete="off" placeholder="Broadcast..."/>
+	  </form>
+  </div>
+  <% } %>
 </div>

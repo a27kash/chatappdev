@@ -52,6 +52,12 @@ var qool = {};
 var tool = {};
 
 var users = ['Cersei', 'Jaime', 'Tyrion'];
+var access = {
+	'Cersei': 'user',
+	'Jaime': 'user',
+	'Tyrion': 'admin',
+};
+var admins = ['Tyrion'];
 
 app.get('/home', function(req, res){
 	var user = req.session.user;
@@ -67,8 +73,10 @@ app.get('/home', function(req, res){
 		    return val !== user;
 		}
 		diff = users.filter(compare);
+		var type = access[user]; 
 		res.render('home', {
 	        user: user,
+	        type: type,
 	        users: diff
 	    });
 	}
@@ -128,10 +136,29 @@ io.on('connection', function(socket){
 			Queues.addMsgId(recipient, mid);
 			socket.emit('system message', {user: recipient, msg: recipient + ' is offline. Message not delivered.'});
 		}
+		else if(access[sender] === 'user' && access[recipient] === 'admin') {
+			socket.emit('system message', {user: recipient, msg: "You don't have permissions to chat with " + recipient + '.'});	
+		}
 		else {
 			recipientSocketId.emit('chat message', {user: sender, msg: message});
+			if(access[sender] === 'user') {
+				var d = new Date();
+				var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+				for(i=0;i<admins.length;i++) {
+					var adminSock = tool[pool[admins[i]]];
+					if(adminSock !== undefined) {
+						adminSock.emit('notification', {info: sender + ' sent a message to ' + recipient + ' at ' + time + "."});
+					}
+				}
+			}
 		}    	
   	});
+
+  	socket.on('broadcast', function(data){
+  		var sender = qool[sid];
+  		var message = data.msg;
+  		socket.broadcast.emit('chat message', {user: sender, msg: message});
+  	});  	
 
   	function logMsg(sender, recipient, msg) {
   		console.log("---chat message---");

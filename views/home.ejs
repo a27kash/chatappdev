@@ -25,15 +25,22 @@
      <script>
      	var socket = io();
      	var msgForm = $("#send-message");
+      var brdForm = $("#broadcast");
      	msgForm.submit(function(){
      	 	var user = $('.nav-pills .active').text();
      	 	var userTab = '#' + user + 'Msgs';
      	 	var msg = $('#m').val();
      	 	$(userTab).append($('<li>').text("You:   " + msg));
-        	socket.emit('chat message', {user: user, msg: msg});
-	        $('#m').val('');
-	        return false;
+      	socket.emit('chat message', {user: user, msg: msg});
+        $('#m').val('');
+        return false;
 	     });
+      brdForm.submit(function(){
+        var msg = $('#b').val();
+        socket.emit('broadcast', {msg: msg});
+        $('#b').val('');
+        return false;
+       });
      	toastr.options.preventDuplicates = true;
       	socket.on('chat message', function(data) {
       		var userNav = '#' + data.user;
@@ -50,7 +57,7 @@
       		$('#noticeBtn').attr("class", "btn btn-primary");
       	});
       	socket.on('notification', function(data) {
-      		toastr.info(data.notification);
+      		toastr.info(data.info);
       	});
      </script>
 </body>
